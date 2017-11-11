@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+  Kimeshan -- Lead Engineer -- @kimeshanSA
+
+# THANKS
+
+  <name>
+
+# TECHNOLOGY COLOPHON
+
+  React, CSS3, HTML5
+  Boilerplate: React Starter Kit -- https://reactstarter.com/
