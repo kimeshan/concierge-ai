@@ -12,6 +12,7 @@ const Pin = Model.define(
 
     userId: {
       type: DataType.UUID,
+      allowNull: false,
     },
 
     imageUrl: {
