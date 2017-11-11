@@ -22,6 +22,7 @@ const Pin = Model.define(
     pinId: {
       type: DataType.STRING(255),
       defaultValue: false,
+      unique: true,
     },
 
     pinnedDate: {

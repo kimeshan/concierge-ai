@@ -1,10 +1,11 @@
 /* eslint-disable */
-import { GraphQLList as List } from 'graphql';
-import fetch from 'node-fetch';
-import PinType from '../types/PinType';
-import User from '../models/User';
+import { GraphQLList as List } from "graphql";
+import fetch from "node-fetch";
+import PinType from "../types/PinType";
+import User from "../models/User";
+import Pin from "../models/Pin";
 
-const baseUrl = 'https://api.pinterest.com/v1/me/pins';
+const baseUrl = "https://api.pinterest.com/v1/me/pins";
 let allPins = [];
 
 const pins = {
@@ -13,7 +14,7 @@ const pins = {
     const id = request.body.variables.userId;
     const user = await User.findById(id);
     const url = `${baseUrl}?access_token=${user.get(
-      'pinterestTokens',
+      "pinterestToken",
     )}&fields=image,media,created_at`;
     let response = await fetch(url);
     let results = await response.json();
@@ -25,19 +26,19 @@ const pins = {
         results = await response.json();
         allPins = [...allPins, ...results.data];
       }
-      // console.log("ALL PINS", allPins.length, allPins);
       // we have all pins at this point, let's filter for images only
-      const imagePinsOnly = allPins.filter(pin => pin.media.type === 'image');
-      const imageUrls = imagePinsOnly.map(
-        pin =>
-          new PinType({
-            pinId: pin.id,
-            userId: id,
-            imageUrl: pin.image.original.url,
-          }),
-      );
+      const imagePinsOnly = allPins.filter(pin => pin.media.type === "image");
+      const pinObjects = imagePinsOnly.map(pin => ({
+        userId: id,
+        imageUrl: pin.image.original.url,
+        pinId: pin.id,
+        pinnedDate: pin.created_at,
+      }));
+      await Pin.bulkCreate(pinObjects, {ignoreDuplicates: true});
+      const userPins = await Pin.findAll({ where: { userId: id } });
+      return userPins;
     } else {
-      // console.log("ERROR, results:", results);
+      console.log("ERROR, results:", results);
       return null;
     }
   },
