@@ -7,22 +7,53 @@ import { stringify } from 'query-string';
 class Home extends React.Component {
   constructor() {
     super();
-    this.state = { detection: {} };
+    this.state = {
+      visionResult: {},
+      visionInProgress: {},
+    };
+  }
+
+  async detectPin(index) {
+    const pinExists = this.props && this.props.pins && this.props.pins[index];
+    if (pinExists) {
+      const pin = this.props.pins[index];
+      this.setState({
+        visionInProgress: {
+          ...this.state.visionInProgress,
+          [pin.id]: true,
+        },
+      });
+      const resp = await this.props.fetch('/graphql', {
+        body: JSON.stringify({
+          query: `{vision {pinId, detected, descriptions, scores} }`,
+          variables: { pin, userId: this.props.userId },
+        }),
+      });
+      const { data, errors } = await resp.json();
+      if (errors) console.log('ERROR', errors);
+      else {
+        this.setState({
+          visionResult: {
+            ...this.state.visionResult,
+            [data.vision.pinId]: data.vision,
+          },
+          visionInProgress: {
+            ...this.state.visionInProgress,
+            [data.vision.pinId]: false,
+          },
+        });
+      }
+    }
   }
 
   async startDetection() {
     const hasPins = this.props && this.props.pins && this.props.pins.length > 0;
-    if (hasPins) {
-      const pin = this.props.pins[0];
-      const resp = await this.props.fetch('/graphql', {
-        body: JSON.stringify({
-          query: `{vision {id, imageUrl} }`,
-          variables: { pin },
-        }),
-      });
-      const data = await resp.json();
-      console.log(data);
-    }
+    const pins = this.props.pins;
+    pins.forEach(async (pin, index) => {
+      const elem = document.getElementById(pin.id);
+      elem.scrollTop = elem.scrollHeight;
+      await this.detectPin(index);
+    });
   }
 
   render() {
@@ -67,13 +98,35 @@ class Home extends React.Component {
                 </div>
               </div>
               <div className="columns is-multiline">
-                {this.props.pins.map(pin => (
-                  <div className={`column is-3 ${s.colBg}`} key={pin.id}>
+                {this.props.pins.map((pin, idx) => (
+                  <div
+                    className={`column is-3 ${s.colBg}`}
+                    key={pin.id}
+                    id={pin.id}
+                  >
                     <div className={s.detectButton}>
-                      {this.state.detection[pin.id] ? (
-                        <span>Done</span>
+                      {this.state.visionResult[pin.id] ? (
+                        <span>
+                          {this.state.visionResult[pin.id].detected
+                            ? this.state.visionResult[pin.id].descriptions
+                                .map(
+                                  (res, idx) =>
+                                    `${res} (${this.state.visionResult[pin.id]
+                                      .scores[idx]})`,
+                                )
+                                .join(', ')
+                            : 'No location detected'}
+                        </span>
                       ) : (
-                        <span className="button is-warning">Waiting</span>
+                        <span
+                          className={`button is-warning ${this.state
+                            .visionInProgress[pin.id]
+                            ? 'is-loading'
+                            : ''}`}
+                          onClick={this.detectPin.bind(this, idx)}
+                        >
+                          Detect
+                        </span>
                       )}
                     </div>
                     <div className="image">

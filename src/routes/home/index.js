@@ -18,16 +18,16 @@ async function action(props) {
   const resp = await props.fetch('/graphql', {
     body: JSON.stringify({
       query: `{pins {id, imageUrl} }`,
-      variables: {userId},
+      variables: { userId },
     }),
   });
-  const {data} = await resp.json();
+  const { data } = await resp.json();
   return {
     chunks: ['home'],
     title: 'AI Concierge',
     component: (
       <Layout>
-        <Home pins={data.pins} {...props}/>
+        <Home pins={data.pins} userId={1} {...props} />
       </Layout>
     ),
   };

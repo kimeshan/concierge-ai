@@ -14,6 +14,8 @@ const VisionResultType = new ObjectType({
     detected: { type: new NonNull(BooleanType) },
     descriptions: { type: new ListType(StringType) },
     scores: { type: new ListType(FloatType) },
+    locality: { type: StringType },
+    country: { type: StringType },
   },
 });
 

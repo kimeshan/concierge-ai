@@ -31,12 +31,17 @@ const Landmark = Model.define(
       defaultValue: false,
     },
 
-    country: {
+    countryName: {
       type: DataType.STRING(255),
       defaultValue: false,
     },
 
-    city: {
+    countryCode: {
+      type: DataType.STRING(255),
+      defaultValue: false,
+    },
+
+    locality: {
       type: DataType.STRING(255),
       defaultValue: false,
     },
