@@ -41,7 +41,6 @@ const vision = {
       descriptions: goodAnnotations.map(anno => anno.description).slice(0, 2),
       scores: goodAnnotations.map(anno => anno.score).slice(0, 2),
     };
-    console.log(landmark);
     // if landmark is stored, just return with database info
     if (landmark) {
       return {

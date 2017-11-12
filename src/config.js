@@ -18,8 +18,8 @@ if (process.env.BROWSER) {
 module.exports = {
   // Node.js app
   port: process.env.PORT || 3000,
-  googley_key_file : process.env.GOOGLE_APPLICATION_CREDENTIALS,
-  google_api_key: "AIzaSyBfkS8icsSdUkctV3vO4iplaqgGKZWvDVo",
+  googley_key_file: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+  google_api_key: 'AIzaSyBfkS8icsSdUkctV3vO4iplaqgGKZWvDVo',
   // API Gateway
   api: {
     // API URL to be used in the client-side code
@@ -72,7 +72,7 @@ module.exports = {
       secret:
         process.env.PINTEREST_APP_SECRET ||
         '397341fb0fc68ca4e23fce6befe54ec0d07379dfe5e6a8b02377869a6e9342a5',
-      access_token: "Af3dRKx5H8-JpTfGHXbEqeP2by0PFPYZ4b-xnvNEdxqMUeAssAAAAAA",  
+      access_token: 'Af3dRKx5H8-JpTfGHXbEqeP2by0PFPYZ4b-xnvNEdxqMUeAssAAAAAA',
     },
   },
 };

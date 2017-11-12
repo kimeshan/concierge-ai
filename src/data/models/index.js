@@ -22,7 +22,7 @@ Pin.hasOne(Landmark, {
   as: 'landmark',
   onUpdate: 'cascade',
   onDelete: 'cascade',
-})
+});
 
 function sync(...args) {
   return sequelize.sync(...args);

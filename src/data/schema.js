@@ -6,6 +6,7 @@ import {
 import me from './queries/me';
 import pins from './queries/pins';
 import vision from './queries/vision';
+import {trip, topDestinations} from './queries/trip';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -14,6 +15,8 @@ const schema = new Schema({
       me,
       pins,
       vision,
+      topDestinations,
+      trip,
     },
   }),
 });

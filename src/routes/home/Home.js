@@ -10,14 +10,25 @@ class Home extends React.Component {
     this.state = {
       visionResult: {},
       visionInProgress: {},
+      fullDetectionStatus: null,
+      loadingTrip: null,
+      topCountries: null,
+      firstCountryCities: null,
+      result: null,
     };
+  }
+
+  setStateAsync(state) {
+    return new Promise(resolve => {
+      this.setState(state, resolve);
+    });
   }
 
   async detectPin(index) {
     const pinExists = this.props && this.props.pins && this.props.pins[index];
     if (pinExists) {
       const pin = this.props.pins[index];
-      this.setState({
+      await this.setStateAsync({
         visionInProgress: {
           ...this.state.visionInProgress,
           [pin.id]: true,
@@ -25,21 +36,32 @@ class Home extends React.Component {
       });
       const resp = await this.props.fetch('/graphql', {
         body: JSON.stringify({
-          query: `{vision {pinId, detected, descriptions, scores} }`,
+          query: `{vision {pinId, detected, descriptions, scores, locality, country} }`,
           variables: { pin, userId: this.props.userId },
         }),
       });
       const { data, errors } = await resp.json();
-      if (errors) console.log('ERROR', errors);
-      else {
-        this.setState({
+      if (errors) {
+        console.log('ERROR', errors);
+        await this.setStateAsync({
+          visionInProgress: {
+            ...this.state.visionInProgress,
+            [pin.id]: false,
+          },
           visionResult: {
             ...this.state.visionResult,
-            [data.vision.pinId]: data.vision,
+            [pin.id]: { pinId: pin.id, detected: false },
+          },
+        });
+      } else {
+        await this.setStateAsync({
+          visionResult: {
+            ...this.state.visionResult,
+            [pin.id]: data.vision,
           },
           visionInProgress: {
             ...this.state.visionInProgress,
-            [data.vision.pinId]: false,
+            [pin.id]: false,
           },
         });
       }
@@ -47,13 +69,43 @@ class Home extends React.Component {
   }
 
   async startDetection() {
+    await this.setStateAsync({ fullDetectionStatus: 'progress' });
     const hasPins = this.props && this.props.pins && this.props.pins.length > 0;
     const pins = this.props.pins;
     pins.forEach(async (pin, index) => {
-      const elem = document.getElementById(pin.id);
-      elem.scrollTop = elem.scrollHeight;
+      console.log('detecting pin', index);
       await this.detectPin(index);
+      if (index === pins.length - 1)
+        await this.setStateAsync({ fullDetectionStatus: 'complete' });
     });
+  }
+
+  async showTrip() {
+    this.setState({ loadingTrip: true });
+    const resp = await this.props.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `{topDestinations {countries, firstCountryCities} }`,
+        variables: { userId: this.props.userId },
+      }),
+    });
+    const { data, errors } = await resp.json();
+    this.setState({
+        topCountriesAvailable: true,
+        topCountries: data.topDestinations.countries,
+        firstCountryCities: data.topDestinations.firstCountryCities,
+    });
+    // now call skyscanner endpoint
+    const tripsResponse = await this.props.fetch('/graphql', {
+      body: JSON.stringify({
+        query: `{trip {destination, price, departDate, returnDate} }`,
+        variables: {
+          countries: data.topDestinations.countries,
+          firstCountryCities: data.topDestinations.firstCountryCities
+        },
+      }),
+    });
+    const tripResult = await tripsResponse.json();
+    this.setState({result: tripResult.data.trip, loadingTrip: false});
   }
 
   render() {
@@ -90,7 +142,10 @@ class Home extends React.Component {
               <div className="columns">
                 <div className="column">
                   <span
-                    className="button is-info is-large"
+                    className={`button is-info is-large ${this.state
+                      .fullDetectionStatus === 'progress'
+                      ? 'is-loading'
+                      : ''}`}
                     onClick={this.startDetection.bind(this)}
                   >
                     Start Image Vision
@@ -111,8 +166,11 @@ class Home extends React.Component {
                             ? this.state.visionResult[pin.id].descriptions
                                 .map(
                                   (res, idx) =>
-                                    `${res} (${this.state.visionResult[pin.id]
-                                      .scores[idx]})`,
+                                    `${res} (${Math.round(
+                                      this.state.visionResult[pin.id].scores[
+                                        idx
+                                      ] * 10,
+                                    ) / 10})`,
                                 )
                                 .join(', ')
                             : 'No location detected'}
@@ -132,25 +190,65 @@ class Home extends React.Component {
                     <div className="image">
                       <img className={s.image} src={pin.imageUrl} />
                     </div>
+                    {this.state.visionResult[pin.id] &&
+                    this.state.visionResult[pin.id].detected ? (
+                      <span>
+                        {`${this.state.visionResult[pin.id].locality}, ${this
+                          .state.visionResult[pin.id].country}`}
+                      </span>
+                    ) : null}
                   </div>
                 ))}
               </div>
             </div>
           </section>
         ) : null}
-        {hasPins ? (
+        {this.state.fullDetectionStatus !== 'complete' ? (
           <section className="section">
             <div className="container">
-              <h1>3. When do you want to travel?</h1>
-              <div className="buttons">
-                <span className="button is-info is-large">
-                  This coming weekend
-                </span>
-                <span className="button is-info is-large">
-                  Weekend after that
-                </span>
-                <span className="button is-info is-large">
-                  3rd weekend from now
+            <h1>3. It's travel time!</h1>
+              {this.state.loadingTrip!==null && this.state.topCountries!==null ?
+                <div className="column">
+                  <h2 className="title is-2">Your top two most pinned countries are:</h2>
+                  <div className="column is-6">
+                    <span className="tag is-success is-large is-rounded">{this.state.topCountries[0]}</span>
+                  </div>
+                  <div className="column is-6">  
+                    <span className="tag is-success is-large is-rounded">{this.state.topCountries[1]}</span>
+                  </div>  
+                  <h2 className="title is-2">Your top pinned locations in {this.state.topCountries[0]} are:</h2>
+                  {this.state.firstCountryCities.map((city)=> {
+                    return <span className="tag is-warning is-large is-rounded" key={city}>{city}</span>
+                  })}
+                  {this.state.result!==null ? 
+                    <div className="column is-12">
+                      <h1 className="title is-2">Whoohoo! You're going from Geneva to: <b>{this.state.result.destination}</b></h1>
+                      <h3 className="title is-3">Depart: {this.state.result.departDatae}</h3>
+                      <h3 className="title is-3">Return: {this.state.result.returnDate}</h3>
+                      <h4 className="title is-4">Price: CHF {this.state.result.price}</h4>
+                    </div> : null
+                  }
+                </div> :
+                <div className="column is-full is-offset-one-quarter">
+                  <div className="buttons">
+                    <span className="button is-info is-large">
+                      This coming weekend
+                    </span>
+                    <span className="button is-info is-large is-outlined">
+                      Weekend after that
+                    </span>
+                    <span className="button is-info is-large is-outlined">
+                      3rd weekend from now
+                    </span>
+                  </div>
+                </div>
+              }
+              <div className="column is-three-quarters is-offset-one-third">
+                <span
+                  className={`button is-success is-large ${this.state.loadingTrip ? "is-loading" : ""}`}
+                  onClick={this.showTrip.bind(this)}
+                >
+                  {this.props.result ? "BOOK NOW" : "SHOW ME MY NEXT TRIP!"}
                 </span>
               </div>
             </div>
