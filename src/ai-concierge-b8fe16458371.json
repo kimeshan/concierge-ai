@@ -1,0 +1,14 @@
+{
+  "type": "service_account",
+  "project_id": "ai-concierge-185823",
+  "private_key_id": "b8fe1645837151bc167bfcf538c49a31e0e62b88",
+  "private_key":
+    "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDhT4vqGUjeEmRe\nJ7Z/A6Lv8BcqRQs6NDqEvQJQlei8rbXLkucfKML9BkD9CsmnAaQhR3ahPedl2AQv\n88gDAXO7GHJCIPmLUS7LBc79s80WS+fI/BZzzRyYugjjdbLb5y4Il2K1tYCMukjR\nOI0DWGHAvhOV1boxbnr7fCRZvx2P+GzYhr4Ji6gBPUXjjGpX6I+FGI1/VWRZc2+J\nncSRM/PPVsSb4A4sSlp0t0FNbAFZeGbfzZfhQ+GyVZeQK2OPmpRBRqrQZnqcPlyu\nTu1RRPEztGj3rToj7uziO5g+PBJAPJRtA4dsTNCNK1lXF6I7ncKLIQoj8qDKE0bR\nga/ErVIlAgMBAAECggEAIXw9AxG27qo1GHk2ejIEKTy5dKLGRGQ2vjuI+IkPCduX\nRSYUC2F3eTtQtUrBJXzs87U3QEd++HfeR3Inq6qvlILRmFpmO/pYxfubA8GRHVsy\nm4A7pgI52cjsQUHgzyXQhZ5aIT9UV5Xn9JA/BNxByu904bPd9DLDPFT64guxTRAL\nQ27+7xk0i4i/SFNnnyNCs/cJ6r8gyYbASbp8SzFuc7DHYPX3meK7du8DlJTc2GYt\n8M2FCoWRc4q2c0crpgk2p55zrLhTKSkgNLaZRMDVkvIP+WD4/olvPeuQd6CSE8vN\nxOTN6peIUeDKjMMypQTUueopbShV19aV68duU02mkQKBgQD8bUF4liCtqySLuhih\nD9EnrhW9CI6DJCHVGrPeotk1qeSD58VWLwH+LNsS1i1HDe2WdC0Lin+zZ51YbpwH\nXVR6EeRDFzmq8n6tKE1PLKq3UqOWRNaMTaNkSaygzY1oGL+pPoetWvW9YS4Y1e5S\n2mqVOTUa+Rnx6IQugHP3qtExywKBgQDkgAcTP0SdEEEGQBcqQMLvYJW9zvTV1i9j\nHtWN4+ah1fxRRNZ46cWJ+FBknsN5ShiT4+n874/TN5TDpu6IvcNnOd5gR9dXPwfg\nXLhki/+eZH3638+SntNspbtFJ7E/ig3AX7lH8rVNlsaSQe4isThjSVR0SMNeB2VP\njf7XCyRNzwKBgQDRMxLxhyoqBA5TprVGtj8W7ZWihnblhIptfKXZO4lciiKSlwDa\nvjaemjotUEdR/d8Ls9ipGe1fl921LmYtTFH4oN9WIuduH26QvzfjCBerutdMcFyH\nBskFEnH5CqHIxcoBz4rORvYmL2Xuu026aL2wUisK4at46sSxbU+u0GhzJQKBgHsu\nUaIcn16UnplB/7r1gqENTmwun2qPtqgWvUVqsLBZ7VXaaExyqd1BEgXMWNCQE0PW\nwBNtCfnxoq7+1OS+eBKz7Z+12u7bueFH2tfJaRn4Trnp4brHCG8vwQ784N7CC7vD\nXtzciMS1HYNHK5tkMmPD6lVtzHRqREFo6RMAnKedAoGBAORUwIVP5CvF7lGD4iPW\ns6EhJ2F+1NtI8al0LeJUqzjqaLZVodqRNdhxEFUlG/eEDJENqzzT2R+i/i0pP7gT\n/D+SUIIk+pFhWqKhPpu/pccR4NqqrQEu+ukq8ARLD6jnkb1s564bA1YSDCZHARI+\nxW7SRrrWPLvQsVqiIvETT9X9\n-----END PRIVATE KEY-----\n",
+  "client_email": "cloud-service@ai-concierge-185823.iam.gserviceaccount.com",
+  "client_id": "116234696382115955799",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url":
+    "https://www.googleapis.com/robot/v1/metadata/x509/cloud-service%40ai-concierge-185823.iam.gserviceaccount.com"
+}
