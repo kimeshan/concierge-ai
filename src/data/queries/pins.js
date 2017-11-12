@@ -13,6 +13,8 @@ const pins = {
   async resolve({ request }) {
     const id = request.body.variables.userId;
     const user = await User.findById(id);
+    const userPins = await Pin.findAll({ where: { userId: id } });
+    if (userPins && userPins.length > 0) return userPins.slice(0,5);
     const url = `${baseUrl}?access_token=${user.get(
       "pinterestToken",
     )}&fields=image,media,created_at`;
@@ -36,7 +38,7 @@ const pins = {
       }));
       await Pin.bulkCreate(pinObjects, {ignoreDuplicates: true});
       const userPins = await Pin.findAll({ where: { userId: id } });
-      return userPins;
+      return userPins.slice(0,5);
     } else {
       console.log("ERROR, results:", results);
       return null;
